@@ -1,0 +1,16 @@
+{
+  "nodes": {
+    "ca8904afdb396c56c364ef3215facf54d0f2322f052a281d8a7c2e05ded72a30": {
+      "node_id": "ca8904afdb396c56c364ef3215facf54d0f2322f052a281d8a7c2e05ded72a30",
+      "display_name": "Alpha-Node",
+      "address": "127.0.0.1:7700",
+      "last_seen": "2026-10-28T10:18:11.5180195Z",
+      "status": "offline",
+      "capacity_bytes": 10737418240,
+      "used_bytes": 0
+    }
+  },
+  "files": {},
+  "locations": {},
+  "transfers": {}
+}

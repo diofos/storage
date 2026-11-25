@@ -1,0 +1,64 @@
+# Binaries and build artifacts
+bin/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Go dependency and cache
+vendor/
+
+# Test coverage and profiling
+*.cover
+*.prof
+
+# Node storage roots and chunk data directories (protect private data)
+*_network/
+ggnetwork/
+data/
+storage/
+chunks/
+meshstore_data/
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# Security, keys, certificates, identities, and secrets
+*.pem
+*.key
+*.crt
+*.cert
+*.p12
+*.pfx
+secrets/
+identity.json
+private_key*
+id_rsa*
+*.secret
+
+# Configuration and environment variables
+.env
+.env.*
+!.env.example
+config.local.yaml
+config.local.json
+
+# Logs and temporary files
+*.log
+tmp/
+temp/
+
+# IDE, OS, and editor metadata
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+desktop.ini

@@ -1,0 +1,305 @@
+package api
+
+import (
+	"encoding/json"
+	"fmt"
+	"net/http"
+	"strings"
+	"time"
+
+	"github.com/anthdm/foreverstore/internal/node"
+	"github.com/anthdm/foreverstore/web"
+)
+
+// Server exposes the MeshStore REST API over HTTP.
+type Server struct {
+	node      *node.Node
+	startTime time.Time
+	httpSrv   *http.Server
+}
+
+// NewServer creates a new API server.
+func NewServer(n *node.Node) *Server {
+	s := &Server{
+		node:      n,
+		startTime: time.Now().UTC(),
+	}
+
+	mux := http.NewServeMux()
+	mux.Handle("/", web.Handler())
+	mux.HandleFunc("/api/v1/status", s.handleStatus)
+	mux.HandleFunc("/api/v1/nodes", s.handleNodes)
+	mux.HandleFunc("/api/v1/nodes/add", s.handleAddNode)
+	mux.HandleFunc("/api/v1/files", s.handleFiles)
+	mux.HandleFunc("/api/v1/files/", s.handleFileItem)
+	mux.HandleFunc("/api/v1/transfers", s.handleTransfers)
+	mux.HandleFunc("/api/v1/storage", s.handleStorage)
+
+	s.httpSrv = &http.Server{
+		Addr:    n.Config.API.ListenAddress,
+		Handler: s.corsMiddleware(mux),
+	}
+
+	return s
+}
+
+// Start begins listening on the configured HTTP address.
+func (s *Server) Start() error {
+	return s.httpSrv.ListenAndServe()
+}
+
+// Stop shuts down the API server.
+func (s *Server) Stop() error {
+	return s.httpSrv.Close()
+}
+
+func (s *Server) corsMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
+}
+
+func (s *Server) writeJSON(w http.ResponseWriter, status int, data any) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+	_ = json.NewEncoder(w).Encode(data)
+}
+
+func (s *Server) writeError(w http.ResponseWriter, status int, message string) {
+	s.writeJSON(w, status, map[string]string{"error": message})
+}
+
+// GET /api/v1/status
+func (s *Server) handleStatus(w http.ResponseWriter, r *http.Request) {
+	used, max, avail := s.node.Store.Stats()
+	s.writeJSON(w, http.StatusOK, map[string]any{
+		"node_id":          s.node.Identity.NodeID,
+		"display_name":     s.node.Identity.DisplayName,
+		"listen_address":   s.node.Config.Node.ListenAddress,
+		"network_id":       s.node.Config.Mesh.NetworkID,
+		"uptime_seconds":   int64(time.Since(s.startTime).Seconds()),
+		"storage_used":     used,
+		"storage_max":      max,
+		"storage_avail":    avail,
+		"chunk_size_mb":    s.node.Config.Storage.ChunkSizeMB,
+		"replication_factor": s.node.Config.Storage.ReplicationFactor,
+	})
+}
+
+// GET /api/v1/nodes
+func (s *Server) handleNodes(w http.ResponseWriter, r *http.Request) {
+	nodes := s.node.Index.GetNodes()
+	s.writeJSON(w, http.StatusOK, map[string]any{
+		"nodes": nodes,
+		"count": len(nodes),
+	})
+}
+
+// POST /api/v1/nodes/add
+func (s *Server) handleAddNode(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		s.writeError(w, http.StatusMethodNotAllowed, "method not allowed")
+		return
+	}
+
+	var req struct {
+		Address string `json:"address"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil || req.Address == "" {
+		s.writeError(w, http.StatusBadRequest, "valid peer address required")
+		return
+	}
+
+	if err := s.node.ConnectPeer(req.Address); err != nil {
+		s.writeError(w, http.StatusBadGateway, fmt.Sprintf("failed to connect to peer: %v", err))
+		return
+	}
+
+	s.writeJSON(w, http.StatusOK, map[string]any{
+		"message": "peer connection initiated",
+		"address": req.Address,
+	})
+}
+
+// GET /api/v1/files or POST /api/v1/files/upload
+func (s *Server) handleFiles(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		files := s.node.Index.ListFiles()
+		s.writeJSON(w, http.StatusOK, map[string]any{
+			"files": files,
+			"count": len(files),
+		})
+
+	case http.MethodPost:
+		// Multipart file upload
+		if err := r.ParseMultipartForm(32 << 20); err != nil { // 32MB in-memory buffer
+			s.writeError(w, http.StatusBadRequest, "invalid multipart form")
+			return
+		}
+
+		file, header, err := r.FormFile("file")
+		if err != nil {
+			s.writeError(w, http.StatusBadRequest, "missing 'file' form field")
+			return
+		}
+		defer file.Close()
+
+		logicalPath := r.FormValue("path")
+		if logicalPath == "" {
+			logicalPath = "/" + header.Filename
+		}
+
+		record, err := s.node.UploadFile(header.Filename, logicalPath, file)
+		if err != nil {
+			s.writeError(w, http.StatusInternalServerError, fmt.Sprintf("upload failed: %v", err))
+			return
+		}
+
+		s.writeJSON(w, http.StatusCreated, record)
+
+	default:
+		s.writeError(w, http.StatusMethodNotAllowed, "method not allowed")
+	}
+}
+
+// /api/v1/files/{id} and /api/v1/files/{id}/download
+func (s *Server) handleFileItem(w http.ResponseWriter, r *http.Request) {
+	path := strings.TrimPrefix(r.URL.Path, "/api/v1/files/")
+	parts := strings.Split(path, "/")
+	fileID := parts[0]
+
+	if fileID == "" {
+		s.writeError(w, http.StatusBadRequest, "file id required")
+		return
+	}
+
+	if len(parts) == 2 && parts[1] == "download" {
+		// Download file
+		record, err := s.node.Index.GetFile(fileID)
+		if err != nil {
+			s.writeError(w, http.StatusNotFound, "file not found")
+			return
+		}
+
+		w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", record.FileName))
+		w.Header().Set("Content-Type", "application/octet-stream")
+		w.Header().Set("Content-Length", fmt.Sprintf("%d", record.SizeBytes))
+
+		if err := s.node.DownloadFile(fileID, w); err != nil {
+			// Headers already sent if streaming started, log error
+			return
+		}
+		return
+	}
+
+	switch r.Method {
+	case http.MethodGet:
+		record, err := s.node.Index.GetFile(fileID)
+		if err != nil {
+			s.writeError(w, http.StatusNotFound, "file not found")
+			return
+		}
+
+		type chunkDetail struct {
+			Index     int      `json:"index"`
+			ChunkID   string   `json:"chunk_id"`
+			SizeBytes int64    `json:"size_bytes"`
+			Locations []string `json:"locations"`
+		}
+
+		details := make([]chunkDetail, 0, len(record.Chunks))
+		for _, ch := range record.Chunks {
+			details = append(details, chunkDetail{
+				Index:     ch.Index,
+				ChunkID:   ch.ChunkID,
+				SizeBytes: ch.SizeBytes,
+				Locations: s.node.Index.GetChunkLocations(ch.ChunkID),
+			})
+		}
+
+		s.writeJSON(w, http.StatusOK, map[string]any{
+			"file":   record,
+			"chunks": details,
+		})
+
+	case http.MethodDelete:
+		if err := s.node.Index.DeleteFile(fileID); err != nil {
+			s.writeError(w, http.StatusNotFound, "file not found")
+			return
+		}
+		_ = s.node.Index.Save()
+		s.writeJSON(w, http.StatusOK, map[string]string{"message": "file marked deleted"})
+
+	default:
+		s.writeError(w, http.StatusMethodNotAllowed, "method not allowed")
+	}
+}
+
+// GET /api/v1/transfers
+func (s *Server) handleTransfers(w http.ResponseWriter, r *http.Request) {
+	transfers := s.node.Index.ListTransfers()
+	s.writeJSON(w, http.StatusOK, map[string]any{
+		"transfers": transfers,
+		"count":     len(transfers),
+	})
+}
+
+// GET, POST, or PATCH /api/v1/storage
+func (s *Server) handleStorage(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		totalCap, totalUsed, avail, onlineNodes, totalNodes := s.node.Index.MeshStorageStats()
+		rFactor := s.node.Config.Storage.ReplicationFactor
+		usableCapacity := totalCap
+		if rFactor > 0 {
+			usableCapacity = totalCap / int64(rFactor)
+		}
+
+		s.writeJSON(w, http.StatusOK, map[string]any{
+			"raw_capacity_bytes":    totalCap,
+			"used_bytes":            totalUsed,
+			"available_bytes":       avail,
+			"usable_capacity_bytes": usableCapacity,
+			"replication_factor":    rFactor,
+			"nodes_online":          onlineNodes,
+			"nodes_total":           totalNodes,
+			"storage_health":        s.calculateStorageHealth(onlineNodes, totalNodes),
+		})
+
+	case http.MethodPost, http.MethodPatch:
+		var req struct {
+			MaxStorageGB int64 `json:"max_storage_gb"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil || req.MaxStorageGB <= 0 {
+			s.writeError(w, http.StatusBadRequest, "valid max_storage_gb required (must be > 0)")
+			return
+		}
+
+		s.node.SetStorageQuotaGB(req.MaxStorageGB)
+		s.writeJSON(w, http.StatusOK, map[string]any{
+			"message":        "storage quota updated successfully",
+			"max_storage_gb": req.MaxStorageGB,
+		})
+
+	default:
+		s.writeError(w, http.StatusMethodNotAllowed, "method not allowed")
+	}
+}
+
+func (s *Server) calculateStorageHealth(online int, total int) string {
+	if total == 0 || online == total {
+		return "healthy"
+	}
+	if online > 0 {
+		return "degraded"
+	}
+	return "critical"
+}
