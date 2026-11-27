@@ -20,8 +20,10 @@ vendor/
 ggnetwork/
 data/
 storage/
+!internal/storage/
 chunks/
 meshstore_data/
+meshstore_data*/
 *.db
 *.db-shm
 *.db-wal

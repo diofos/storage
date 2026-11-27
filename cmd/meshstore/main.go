@@ -16,7 +16,7 @@ import (
 
 func main() {
 	var (
-		portFlag        = flag.String("port", "7000", "TCP peer listen port")
+		portFlag        = flag.String("port", "7001", "TCP peer listen port")
 		apiPortFlag     = flag.String("api", "8070", "HTTP REST API listen port")
 		dataDirFlag     = flag.String("data", "", "Data directory (default ./meshstore_data_<port>)")
 		nameFlag        = flag.String("name", "", "Node display name")
@@ -38,7 +38,7 @@ func main() {
 		}
 	} else {
 		cfg = config.DefaultConfig(*portFlag)
-		cfg.Node.ListenAddress = "127.0.0.1:" + *portFlag
+		cfg.Node.ListenAddress = "0.0.0.0:" + *portFlag
 		cfg.API.ListenAddress = "127.0.0.1:" + *apiPortFlag
 		if *dataDirFlag != "" {
 			cfg.Node.DataDirectory = *dataDirFlag

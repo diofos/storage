@@ -158,6 +158,12 @@ function renderHeader() {
       const parts = (state.status.listen_address || '').split(':');
       portEl.textContent = parts.length > 1 ? `:${parts[parts.length - 1]}` : '';
     }
+
+    const lanAddr = state.status.lan_address || state.status.listen_address;
+    const shareableEl = document.getElementById('shareable-lan-address');
+    const modalLanEl = document.getElementById('modal-my-lan-address');
+    if (shareableEl && lanAddr) shareableEl.textContent = lanAddr;
+    if (modalLanEl && lanAddr) modalLanEl.textContent = lanAddr;
   }
 
   if (state.storage) {
@@ -856,6 +862,20 @@ function initEventListeners() {
   });
   document.getElementById('btn-cancel-device-modal')?.addEventListener('click', () => {
     addDeviceModal?.classList.remove('active');
+  });
+
+  // Copy LAN Address buttons
+  document.getElementById('btn-copy-lan-address')?.addEventListener('click', () => {
+    const addr = state.status?.lan_address || document.getElementById('shareable-lan-address')?.textContent;
+    if (addr && addr !== 'Detecting...') {
+      copyText(addr, 'Connection address copied! Enter this on the other computer.');
+    }
+  });
+  document.getElementById('btn-copy-modal-lan-address')?.addEventListener('click', () => {
+    const addr = state.status?.lan_address || document.getElementById('modal-my-lan-address')?.textContent;
+    if (addr && addr !== 'Detecting...') {
+      copyText(addr, 'Connection address copied! Enter this on the other computer.');
+    }
   });
 
   // Submit Connect Peer

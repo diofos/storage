@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"fmt"
+	"net"
 	"net/http"
 	"strings"
 	"time"
@@ -10,6 +11,31 @@ import (
 	"github.com/anthdm/foreverstore/internal/node"
 	"github.com/anthdm/foreverstore/web"
 )
+
+// getLocalLANIP retrieves the host's actual outbound IPv4 address on the local network (Ethernet / Wi-Fi).
+func getLocalLANIP() string {
+	conn, err := net.Dial("udp", "8.8.8.8:80")
+	if err == nil {
+		defer conn.Close()
+		localAddr := conn.LocalAddr().(*net.UDPAddr)
+		if localAddr.IP != nil && !localAddr.IP.IsLoopback() {
+			return localAddr.IP.String()
+		}
+	}
+
+	// Fallback to iterating interfaces
+	addrs, err := net.InterfaceAddrs()
+	if err == nil {
+		for _, addr := range addrs {
+			if ipnet, ok := addr.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
+				if ipnet.IP.To4() != nil {
+					return ipnet.IP.String()
+				}
+			}
+		}
+	}
+	return "127.0.0.1"
+}
 
 // Server exposes the MeshStore REST API over HTTP.
 type Server struct {
@@ -79,16 +105,32 @@ func (s *Server) writeError(w http.ResponseWriter, status int, message string) {
 // GET /api/v1/status
 func (s *Server) handleStatus(w http.ResponseWriter, r *http.Request) {
 	used, max, avail := s.node.Store.Stats()
+	listenAddr := s.node.Config.Node.ListenAddress
+	_, port, err := net.SplitHostPort(listenAddr)
+	if err != nil {
+		parts := strings.Split(listenAddr, ":")
+		if len(parts) > 1 {
+			port = parts[len(parts)-1]
+		} else {
+			port = "7001"
+		}
+	}
+	lanIP := getLocalLANIP()
+	lanAddress := net.JoinHostPort(lanIP, port)
+
 	s.writeJSON(w, http.StatusOK, map[string]any{
-		"node_id":          s.node.Identity.NodeID,
-		"display_name":     s.node.Identity.DisplayName,
-		"listen_address":   s.node.Config.Node.ListenAddress,
-		"network_id":       s.node.Config.Mesh.NetworkID,
-		"uptime_seconds":   int64(time.Since(s.startTime).Seconds()),
-		"storage_used":     used,
-		"storage_max":      max,
-		"storage_avail":    avail,
-		"chunk_size_mb":    s.node.Config.Storage.ChunkSizeMB,
+		"node_id":            s.node.Identity.NodeID,
+		"display_name":       s.node.Identity.DisplayName,
+		"listen_address":     s.node.Config.Node.ListenAddress,
+		"lan_ip":             lanIP,
+		"lan_address":        lanAddress,
+		"p2p_port":           port,
+		"network_id":         s.node.Config.Mesh.NetworkID,
+		"uptime_seconds":     int64(time.Since(s.startTime).Seconds()),
+		"storage_used":       used,
+		"storage_max":        max,
+		"storage_avail":      avail,
+		"chunk_size_mb":      s.node.Config.Storage.ChunkSizeMB,
 		"replication_factor": s.node.Config.Storage.ReplicationFactor,
 	})
 }

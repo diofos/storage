@@ -24,12 +24,22 @@ var (
 )
 
 // PeerConn wraps a live network connection to an authenticated peer.
+type getResult struct {
+	ack  protocol.MsgGetChunkAck
+	data []byte
+	err  error
+}
+
 type PeerConn struct {
 	NodeID      string
 	DisplayName string
 	Address     string
 	Conn        net.Conn
 	mu          sync.Mutex
+
+	reqMu      sync.Mutex
+	storeAckCh chan protocol.MsgStoreChunkAck
+	getAckCh   chan getResult
 }
 
 func (p *PeerConn) Send(msgType protocol.MsgType, payload any) error {
@@ -324,18 +334,55 @@ func (n *Node) dispatchMessage(peer *PeerConn, msgType protocol.MsgType, length 
 		}
 		defer rc.Close()
 
-		if err := peer.Send(protocol.TypeGetChunkAck, protocol.MsgGetChunkAck{
+		peer.mu.Lock()
+		defer peer.mu.Unlock()
+		if err := protocol.WriteMessage(peer.Conn, protocol.TypeGetChunkAck, protocol.MsgGetChunkAck{
 			ChunkID:   getReq.ChunkID,
 			Exists:    true,
 			SizeBytes: size,
 		}); err != nil {
 			return err
 		}
-
-		peer.mu.Lock()
-		defer peer.mu.Unlock()
 		_, err = io.Copy(peer.Conn, rc)
 		return err
+
+	case protocol.TypeStoreChunkAck:
+		var ack protocol.MsgStoreChunkAck
+		if err := protocol.ReadMessagePayload(peer.Conn, length, &ack); err != nil {
+			return err
+		}
+		peer.reqMu.Lock()
+		ch := peer.storeAckCh
+		peer.reqMu.Unlock()
+		if ch != nil {
+			select {
+			case ch <- ack:
+			default:
+			}
+		}
+		return nil
+
+	case protocol.TypeGetChunkAck:
+		var ack protocol.MsgGetChunkAck
+		if err := protocol.ReadMessagePayload(peer.Conn, length, &ack); err != nil {
+			return err
+		}
+		var chunkData []byte
+		var readErr error
+		if ack.Exists && ack.SizeBytes > 0 {
+			chunkData = make([]byte, ack.SizeBytes)
+			_, readErr = io.ReadFull(peer.Conn, chunkData)
+		}
+		peer.reqMu.Lock()
+		ch := peer.getAckCh
+		peer.reqMu.Unlock()
+		if ch != nil {
+			select {
+			case ch <- getResult{ack: ack, data: chunkData, err: readErr}:
+			default:
+			}
+		}
+		return nil
 
 	case protocol.TypeSyncManifest:
 		var syncReq protocol.MsgSyncManifest
@@ -352,6 +399,11 @@ func (n *Node) dispatchMessage(peer *PeerConn, msgType protocol.MsgType, length 
 			FileID:  syncReq.Manifest.FileID,
 			Success: true,
 		})
+
+	case protocol.TypeSyncManifestAck:
+		// Drain and discard payload
+		io.CopyN(io.Discard, peer.Conn, int64(length))
+		return nil
 	}
 
 	// Discard unhandled payload
@@ -496,35 +548,43 @@ func (n *Node) sendChunkToPeer(nodeID string, chunkID string, data []byte) error
 		return ErrNodeNotAvailable
 	}
 
-	peer.mu.Lock()
-	defer peer.mu.Unlock()
+	ackCh := make(chan protocol.MsgStoreChunkAck, 1)
+	peer.reqMu.Lock()
+	peer.storeAckCh = ackCh
+	peer.reqMu.Unlock()
 
-	// 1. Send header & store chunk request
+	defer func() {
+		peer.reqMu.Lock()
+		peer.storeAckCh = nil
+		peer.reqMu.Unlock()
+	}()
+
+	// 1. Send header & store chunk request + stream bytes
 	req := protocol.MsgStoreChunk{
 		ChunkID:   chunkID,
 		SizeBytes: int64(len(data)),
 	}
+	peer.mu.Lock()
 	if err := protocol.WriteMessage(peer.Conn, protocol.TypeStoreChunk, req); err != nil {
+		peer.mu.Unlock()
 		return err
 	}
-
-	// 2. Stream chunk bytes
 	if _, err := peer.Conn.Write(data); err != nil {
+		peer.mu.Unlock()
 		return err
 	}
+	peer.mu.Unlock()
 
-	// 3. Read Ack
-	msgType, length, err := protocol.ReadMessageHeader(peer.Conn)
-	if err != nil || msgType != protocol.TypeStoreChunkAck {
-		return fmt.Errorf("did not receive valid chunk ack: %v", err)
+	// 2. Wait for Ack
+	select {
+	case ack := <-ackCh:
+		if !ack.Success {
+			return fmt.Errorf("chunk ack reported error: %s", ack.ErrorMsg)
+		}
+		return nil
+	case <-time.After(10 * time.Second):
+		return fmt.Errorf("timed out waiting for chunk ack from %s", nodeID)
 	}
-
-	var ack protocol.MsgStoreChunkAck
-	if err := protocol.ReadMessagePayload(peer.Conn, length, &ack); err != nil || !ack.Success {
-		return fmt.Errorf("chunk ack reported error: %s", ack.ErrorMsg)
-	}
-
-	return nil
 }
 
 // DownloadFile reconstructs the file from chunks and writes to dst.
@@ -591,37 +651,43 @@ func (n *Node) fetchChunk(chunkID string) (io.ReadCloser, error) {
 			continue
 		}
 
-		peer.mu.Lock()
+		getCh := make(chan getResult, 1)
+		peer.reqMu.Lock()
+		peer.getAckCh = getCh
+		peer.reqMu.Unlock()
+
 		req := protocol.MsgGetChunk{ChunkID: chunkID}
-		if err := protocol.WriteMessage(peer.Conn, protocol.TypeGetChunk, req); err != nil {
-			peer.mu.Unlock()
-			continue
-		}
-
-		msgType, length, err := protocol.ReadMessageHeader(peer.Conn)
-		if err != nil || msgType != protocol.TypeGetChunkAck {
-			peer.mu.Unlock()
-			continue
-		}
-
-		var ack protocol.MsgGetChunkAck
-		if err := protocol.ReadMessagePayload(peer.Conn, length, &ack); err != nil || !ack.Exists {
-			peer.mu.Unlock()
-			continue
-		}
-
-		// Read chunk into local memory/store
-		buf := make([]byte, ack.SizeBytes)
-		_, err = io.ReadFull(peer.Conn, buf)
+		peer.mu.Lock()
+		err := protocol.WriteMessage(peer.Conn, protocol.TypeGetChunk, req)
 		peer.mu.Unlock()
-
 		if err != nil {
+			peer.reqMu.Lock()
+			peer.getAckCh = nil
+			peer.reqMu.Unlock()
+			continue
+		}
+
+		var res getResult
+		select {
+		case res = <-getCh:
+		case <-time.After(10 * time.Second):
+			peer.reqMu.Lock()
+			peer.getAckCh = nil
+			peer.reqMu.Unlock()
+			continue
+		}
+
+		peer.reqMu.Lock()
+		peer.getAckCh = nil
+		peer.reqMu.Unlock()
+
+		if res.err != nil || !res.ack.Exists {
 			continue
 		}
 
 		// Cache chunk locally
-		n.Store.Write(chunkID, ack.SizeBytes, &sliceReader{data: buf})
-		return &sliceReaderCloser{sliceReader: sliceReader{data: buf}}, nil
+		n.Store.Write(chunkID, res.ack.SizeBytes, &sliceReader{data: res.data})
+		return &sliceReaderCloser{sliceReader: sliceReader{data: res.data}}, nil
 	}
 
 	return nil, fmt.Errorf("chunk %s unavailable on all replicas", chunkID)
