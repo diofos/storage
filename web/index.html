@@ -3,32 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="MeshStore - Distributed Mesh Storage & Seamless Peer-to-Peer File Transfer System">
-  <title>MeshStore — Distributed Mesh Storage Pool</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <meta name="description" content="DIOFOS — Decentralized Object & File Operating Storage. Encrypted peer-to-peer storage fabric.">
+  <title>DIOFOS — Decentralized Mesh Storage</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body class="mesh-theme-dark">
+<body class="diofos-theme">
   <div id="app" class="app-container">
     
-    <!-- Top Navigation Header -->
-    <header class="mesh-header" id="mesh-header">
+    <!-- Persistent Header Bar -->
+    <header class="diofos-header" id="diofos-header">
       <div class="header-left">
-        <div class="logo-group">
+        <a href="#dashboard" class="logo-group">
           <div class="logo-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
               <polyline points="2 17 12 22 22 17"></polyline>
               <polyline points="2 12 12 17 22 12"></polyline>
             </svg>
           </div>
           <div class="logo-text">
-            <span class="brand-name">MeshStore</span>
-            <span class="brand-tag">v1.0 P2P Pool</span>
+            <span class="brand-name">DIOFOS</span>
+            <span class="brand-tag">Mesh Operations</span>
           </div>
-        </div>
+        </a>
 
         <div class="cluster-health-pill" id="cluster-health-pill" title="Network Storage Health">
           <span class="status-beacon" id="health-beacon"></span>
@@ -38,85 +35,227 @@
 
       <div class="header-center">
         <nav class="nav-tabs" id="main-nav-tabs">
-          <button class="nav-tab active" id="tab-dashboard" data-screen="screen-dashboard">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-            <span>Dashboard</span>
+          <button class="nav-tab active" id="tab-dashboard" data-screen="screen-dashboard" title="Dashboard (Press 1)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+            <span>Overview</span>
+            <span class="nav-shortcut">1</span>
           </button>
-          <button class="nav-tab" id="tab-files" data-screen="screen-files">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
-            <span>Shared Files</span>
+          <button class="nav-tab" id="tab-files" data-screen="screen-files" title="Shared Files (Press 2)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+            <span>Files</span>
             <span class="badge" id="nav-files-count">0</span>
+            <span class="nav-shortcut">2</span>
           </button>
-          <button class="nav-tab" id="tab-transfers" data-screen="screen-transfers">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg>
-            <span>Transfers</span>
-            <span class="badge badge-accent" id="nav-transfers-count">0</span>
+          <button class="nav-tab" id="tab-transfers" data-screen="screen-transfers" title="Transfers & Streams (Press 3)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg>
+            <span>Streams</span>
+            <span class="badge" id="nav-transfers-count">0</span>
+            <span class="nav-shortcut">3</span>
           </button>
-          <button class="nav-tab" id="tab-devices" data-screen="screen-devices">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
-            <span>Devices</span>
+          <button class="nav-tab" id="tab-devices" data-screen="screen-devices" title="Participating Devices (Press 4)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+            <span>Topology</span>
             <span class="badge" id="nav-nodes-count">1</span>
+            <span class="nav-shortcut">4</span>
           </button>
-          <button class="nav-tab" id="tab-settings" data-screen="screen-settings">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-            <span>Settings</span>
+          <button class="nav-tab" id="tab-settings" data-screen="screen-settings" title="Engine Settings (Press 5)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            <span>Config</span>
+            <span class="nav-shortcut">5</span>
           </button>
         </nav>
       </div>
 
       <div class="header-right">
-        <div class="local-node-pill" id="local-node-pill" title="Local Peer Identity">
-          <span class="node-dot"></span>
-          <span class="node-name-text" id="header-node-name">Local Node</span>
-          <span class="node-port-text" id="header-node-port">:7000</span>
+        <!-- Apple Color Theme Switcher Dropdown -->
+        <div class="theme-picker-container" id="theme-picker-container">
+          <button class="theme-picker-btn" id="btn-theme-picker" title="Select Apple Color Palette">
+            <span class="theme-swatch swatch-space-black" id="active-theme-swatch"></span>
+            <span class="theme-btn-label" id="active-theme-label">Space Black</span>
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <div class="theme-dropdown-menu" id="theme-dropdown-menu">
+            <div class="theme-dropdown-header">Apple Color Themes</div>
+            <button class="theme-option active" data-theme="apple-space-black">
+              <span class="theme-swatch swatch-space-black"></span>
+              <span class="theme-opt-text">
+                <strong>Space Black</strong>
+                <small>Apple Pro OLED Black & Emerald</small>
+              </span>
+              <svg class="theme-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </button>
+            <button class="theme-option" data-theme="apple-titanium">
+              <span class="theme-swatch swatch-titanium"></span>
+              <span class="theme-opt-text">
+                <strong>Natural Titanium</strong>
+                <small>iPhone 16 Pro Warm Slate & Cyan</small>
+              </span>
+              <svg class="theme-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </button>
+            <button class="theme-option" data-theme="apple-midnight">
+              <span class="theme-swatch swatch-midnight"></span>
+              <span class="theme-opt-text">
+                <strong>Midnight Navy</strong>
+                <small>MacBook Air Deep Blue & Orange</small>
+              </span>
+              <svg class="theme-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </button>
+            <button class="theme-option" data-theme="apple-silver-light">
+              <span class="theme-swatch swatch-silver"></span>
+              <span class="theme-opt-text">
+                <strong>Silver Light</strong>
+                <small>Apple.com Store & macOS Light</small>
+              </span>
+              <svg class="theme-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </button>
+          </div>
         </div>
 
-        <button class="btn btn-primary btn-sm" id="btn-quick-upload">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-          <span>Upload File</span>
+        <div class="local-node-pill" id="local-node-pill" title="Local Authority Node Identity">
+          <span class="node-dot"></span>
+          <span class="node-name-text" id="header-node-name">Detecting...</span>
+          <span class="node-port-text" id="header-node-port">:7001</span>
+        </div>
+
+        <button class="btn btn-primary btn-sm btn-header-upload" id="btn-quick-upload">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+          <span>Distribute File</span>
         </button>
 
-        <button class="btn btn-icon btn-secondary" id="btn-refresh-all" title="Refresh Mesh State">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"></path><path d="M1 20v-6h6"></path><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+        <button class="btn btn-icon btn-secondary" id="btn-refresh-all" title="Poll Mesh Telemetry">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"></path><path d="M1 20v-6h6"></path><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+        </button>
+
+        <!-- Mobile Navigation Menu Toggle -->
+        <button class="btn btn-icon btn-secondary mobile-menu-toggle" id="btn-mobile-menu" aria-label="Toggle Navigation Menu">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
         </button>
       </div>
     </header>
 
-    <!-- Main Content Screens Container -->
-    <main class="mesh-main-content">
+    <!-- Mobile Vertical Navigation Drawer -->
+    <div class="mobile-nav-drawer" id="mobile-nav-drawer">
+      <div class="mobile-nav-backdrop" id="mobile-nav-backdrop"></div>
+      <div class="mobile-nav-panel">
+        <div class="mobile-nav-header">
+          <div class="mobile-nav-node">
+            <span class="node-dot"></span>
+            <span id="mobile-header-node-name">DIOFOS Node</span>
+          </div>
+          <button class="btn btn-icon btn-secondary" id="btn-close-mobile-menu" aria-label="Close Navigation">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+        </div>
+
+        <!-- Vertical Menu List for Mobile Screens -->
+        <nav class="mobile-nav-list" id="mobile-nav-list">
+          <button class="mobile-nav-item active" data-screen="screen-dashboard">
+            <div class="mobile-nav-item-left">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+              <span>Overview</span>
+            </div>
+            <span class="nav-shortcut">1</span>
+          </button>
+
+          <button class="mobile-nav-item" data-screen="screen-files">
+            <div class="mobile-nav-item-left">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+              <span>Files</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="badge" id="mobile-nav-files-count">0</span>
+              <span class="nav-shortcut">2</span>
+            </div>
+          </button>
+
+          <button class="mobile-nav-item" data-screen="screen-transfers">
+            <div class="mobile-nav-item-left">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg>
+              <span>Streams</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="badge" id="mobile-nav-transfers-count">0</span>
+              <span class="nav-shortcut">3</span>
+            </div>
+          </button>
+
+          <button class="mobile-nav-item" data-screen="screen-devices">
+            <div class="mobile-nav-item-left">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+              <span>Topology</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="badge" id="mobile-nav-nodes-count">1</span>
+              <span class="nav-shortcut">4</span>
+            </div>
+          </button>
+
+          <button class="mobile-nav-item" data-screen="screen-settings">
+            <div class="mobile-nav-item-left">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+              <span>Config</span>
+            </div>
+            <span class="nav-shortcut">5</span>
+          </button>
+        </nav>
+
+        <!-- Apple Color Palette Switcher inside Mobile Drawer -->
+        <div class="mobile-nav-footer">
+          <div class="mobile-section-label">Apple Color Palette</div>
+          <div class="mobile-theme-list">
+            <button class="mobile-theme-btn active" data-theme="apple-space-black">
+              <span class="theme-swatch swatch-space-black"></span> Space Black
+            </button>
+            <button class="mobile-theme-btn" data-theme="apple-titanium">
+              <span class="theme-swatch swatch-titanium"></span> Titanium
+            </button>
+            <button class="mobile-theme-btn" data-theme="apple-midnight">
+              <span class="theme-swatch swatch-midnight"></span> Midnight
+            </button>
+            <button class="mobile-theme-btn" data-theme="apple-silver-light">
+              <span class="theme-swatch swatch-silver"></span> Silver Light
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="diofos-workspace">
 
       <!-- ======================================================== -->
-      <!-- SCREEN A: DASHBOARD                                      -->
+      <!-- SCREEN A: OVERVIEW & SYSTEM COCKPIT                      -->
       <!-- ======================================================== -->
       <section class="screen-view active" id="screen-dashboard">
         <div class="view-header">
           <div>
-            <h1 class="view-title">Storage Mesh Dashboard</h1>
-            <p class="view-subtitle">Unified logical storage pool powered by peer-to-peer chunk replication</p>
+            <h1 class="view-title">Storage Mesh Fabric</h1>
+            <p class="view-subtitle">Unified logical volume powered by decentralized chunking and AES-256 CTR encryption</p>
           </div>
           <div class="view-actions">
             <button class="btn btn-secondary btn-sm" id="btn-dash-connect-device">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-              <span>Connect Device</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              <span>Connect Peer</span>
             </button>
             <button class="btn btn-primary btn-sm" id="btn-dash-upload">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-              <span>Upload New File</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+              <span>Slice & Distribute</span>
             </button>
           </div>
         </div>
 
-        <!-- Metrics Overview Grid -->
+        <!-- Telemetry KPI Cards -->
         <div class="metrics-grid">
-          <!-- Raw & Usable Capacity Card -->
-          <div class="metric-card metric-card-glow">
+          <!-- Usable Capacity Card -->
+          <div class="metric-card metric-card-accent">
             <div class="card-header">
-              <span class="card-title">Mesh Storage Pool</span>
-              <span class="badge badge-cyan" id="metric-rep-factor">2x Replication</span>
+              <span class="card-title">Resilient Volume</span>
+              <span class="badge badge-neutral" id="metric-rep-factor">2x Redundancy</span>
             </div>
             <div class="metric-value-row">
-              <div class="metric-big-number" id="metric-usable-cap">--</div>
-              <div class="metric-subtext">Usable Resilient Capacity</div>
+              <div class="metric-big-number tabular-nums" id="metric-usable-cap">--</div>
+              <div class="metric-subtext">Usable Mesh Pool Buffer</div>
             </div>
             <div class="capacity-bar-container">
               <div class="capacity-bar-track">
@@ -124,199 +263,190 @@
               </div>
               <div class="capacity-meta">
                 <span id="metric-used-space">Used: 0 B</span>
-                <span id="metric-raw-cap">Raw: 0 B</span>
+                <span id="metric-raw-cap">Contributed: 0 B</span>
               </div>
             </div>
           </div>
 
-          <!-- Active Devices -->
+          <!-- Connected Peers Card -->
           <div class="metric-card">
             <div class="card-header">
-              <span class="card-title">Connected Devices</span>
-              <div class="icon-circle icon-cyan">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+              <span class="card-title">Mesh Nodes</span>
+              <div class="icon-circle icon-healthy">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
               </div>
             </div>
             <div class="metric-value-row">
-              <div class="metric-big-number" id="metric-online-nodes">--</div>
-              <div class="metric-subtext"><span id="metric-total-nodes">--</span> Total Mesh Nodes</div>
+              <div class="metric-big-number tabular-nums" id="metric-online-nodes">--</div>
+              <div class="metric-subtext"><span id="metric-total-nodes" class="tabular-nums">--</span> Total Participating Agents</div>
             </div>
             <div class="card-footer-info" id="metric-nodes-detail">
-              <span>All storage agents responsive</span>
+              <span>All storage daemons synchronized</span>
             </div>
           </div>
 
-          <!-- Total Files Stored -->
+          <!-- Files Stored Card -->
           <div class="metric-card">
             <div class="card-header">
-              <span class="card-title">Files in Namespace</span>
-              <div class="icon-circle icon-indigo">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+              <span class="card-title">Data Namespace</span>
+              <div class="icon-circle">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
               </div>
             </div>
             <div class="metric-value-row">
-              <div class="metric-big-number" id="metric-files-count">0</div>
-              <div class="metric-subtext"><span id="metric-chunks-count">0</span> Content Chunks</div>
+              <div class="metric-big-number tabular-nums" id="metric-files-count">0</div>
+              <div class="metric-subtext"><span id="metric-chunks-count" class="tabular-nums">0</span> Verified Chunks</div>
             </div>
             <div class="card-footer-info">
-              <span>SHA-256 Content-Addressed</span>
+              <span>SHA-256 CAS Content Addressing</span>
             </div>
           </div>
 
-          <!-- Active Transfers -->
+          <!-- Active Streams Card -->
           <div class="metric-card">
             <div class="card-header">
-              <span class="card-title">Transfers & Sync</span>
-              <div class="icon-circle icon-amber">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+              <span class="card-title">Wire Streams</span>
+              <div class="icon-circle icon-warning">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
               </div>
             </div>
             <div class="metric-value-row">
-              <div class="metric-big-number" id="metric-active-transfers">0</div>
-              <div class="metric-subtext">Active Stream Operations</div>
+              <div class="metric-big-number tabular-nums" id="metric-active-transfers">0</div>
+              <div class="metric-subtext">Active IO Pipelines</div>
             </div>
             <div class="card-footer-info">
-              <span>Zero-loss TCP multiplexing</span>
+              <span>TCP Streaming Protocol</span>
             </div>
           </div>
         </div>
 
-        <!-- Dashboard Two-Column Body -->
-        <div class="dashboard-body-grid">
-          <!-- Recent Files Card -->
-          <div class="content-card">
-            <div class="content-card-header">
-              <div class="card-title-group">
-                <h3 class="card-title">Recent Files in Shared Mesh</h3>
-                <span class="card-hint">Files distributed across your private mesh cluster</span>
+        <!-- Shareable LAN Connection Banner -->
+        <div class="content-card" style="padding: var(--space-4) var(--space-5); margin-bottom: var(--space-6);">
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+            <div>
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 2px;">
+                <span class="status-beacon beacon-active" style="color: var(--color-healthy);"></span>
+                <span style="font-weight: 600; font-size: 13px; color: var(--text-primary);">Direct LAN P2P Address</span>
+                <span class="badge badge-healthy" style="font-size: 10px;">Listening</span>
               </div>
-              <button class="btn btn-ghost btn-sm" id="btn-dash-view-all-files">
-                <span>View All</span>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              <p style="margin: 0; font-size: 12px; color: var(--text-muted);">Computers on your Ethernet switch or Wi-Fi network can connect directly to this node address.</p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <div style="background: var(--bg-inset); border: 1px solid var(--border-default); border-radius: var(--radius-sm); padding: 5px 12px; font-family: var(--font-mono); font-size: 13px; color: var(--color-healthy); font-weight: 600;" id="shareable-lan-address" class="tabular-nums">
+                Detecting...
+              </div>
+              <button class="btn btn-secondary btn-sm" id="btn-copy-lan-address" title="Copy Address">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                <span>Copy</span>
               </button>
             </div>
-            <div class="table-container">
-              <table class="mesh-table" id="table-dash-recent-files">
+          </div>
+        </div>
+
+        <!-- Split Grid: Distributed Files and Connected Nodes -->
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: var(--space-5);">
+          <!-- Left: Recent Files -->
+          <div class="content-card" style="margin-bottom: 0;">
+            <div class="content-card-header">
+              <span class="card-title">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+                Active Distributed Objects
+              </span>
+              <a href="#files" class="btn btn-secondary btn-sm" onclick="switchTab('screen-files'); return false;">View All Files</a>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
                 <thead>
                   <tr>
-                    <th>Filename</th>
-                    <th>Logical Path</th>
+                    <th>Object Name</th>
                     <th>Size</th>
-                    <th>Replicas</th>
-                    <th>Date Added</th>
-                    <th class="text-right">Actions</th>
+                    <th>Chunks</th>
+                    <th>Root Hash</th>
                   </tr>
                 </thead>
-                <tbody id="dash-recent-files-tbody">
-                  <tr>
-                    <td colspan="6" class="table-empty-cell">
-                      <div class="empty-state">
-                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
-                        <p>No files in the mesh yet. Upload your first file to begin distributing chunks!</p>
-                      </div>
-                    </td>
-                  </tr>
+                <tbody id="dash-files-table-body">
+                  <!-- Populated dynamically -->
                 </tbody>
               </table>
             </div>
           </div>
 
-          <!-- Network Nodes Summary -->
-          <div class="content-card">
+          <!-- Right: Active Nodes Summary -->
+          <div class="content-card" style="margin-bottom: 0;">
             <div class="content-card-header">
-              <div class="card-title-group">
-                <h3 class="card-title">Participating Devices</h3>
-                <span class="card-hint">Active storage nodes contributing disk capacity</span>
-              </div>
-              <button class="btn btn-ghost btn-sm" id="btn-dash-manage-devices">
-                <span>Manage</span>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
-              </button>
+              <span class="card-title">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+                Mesh Peers
+              </span>
+              <a href="#devices" class="btn btn-secondary btn-sm" onclick="switchTab('screen-devices'); return false;">Topology</a>
             </div>
-            <div class="device-mini-list" id="dash-device-mini-list">
-              <!-- Dynamically populated -->
+            <div class="devices-mini-list" id="dash-devices-list">
+              <!-- Populated dynamically -->
             </div>
           </div>
         </div>
       </section>
 
       <!-- ======================================================== -->
-      <!-- SCREEN B: SHARED FILES                                   -->
+      <!-- SCREEN B: SHARED FILES & DATA FABRIC                     -->
       <!-- ======================================================== -->
       <section class="screen-view" id="screen-files">
         <div class="view-header">
           <div>
-            <h1 class="view-title">Shared File Namespace</h1>
-            <p class="view-subtitle">Browse, upload, download, and inspect Content-Addressed files distributed across devices</p>
+            <h1 class="view-title">Distributed Object Store</h1>
+            <p class="view-subtitle">Content-addressed storage index sliced and verified across participating peer drives</p>
           </div>
           <div class="view-actions">
-            <button class="btn btn-primary" id="btn-open-upload-modal">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-              <span>Upload File to Mesh</span>
+            <button class="btn btn-secondary btn-sm" id="btn-refresh-files">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"></path><path d="M1 20v-6h6"></path><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+              <span>Refresh Index</span>
+            </button>
+            <button class="btn btn-primary btn-sm" id="btn-files-upload">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              <span>Upload & Distribute</span>
             </button>
           </div>
         </div>
 
-        <!-- Dropzone Box for Quick Drag & Drop -->
-        <div class="upload-dropzone" id="files-page-dropzone">
-          <input type="file" id="direct-file-input" class="hidden-file-input">
-          <div class="dropzone-content">
-            <div class="dropzone-icon">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-            </div>
-            <div class="dropzone-text">
-              <span class="dropzone-title">Drag & drop files here to split into chunks & replicate</span>
-              <span class="dropzone-subtitle">or click to browse from local computer</span>
-            </div>
+        <!-- Tactile Slicing Dropzone -->
+        <div class="file-drop-zone" id="file-drop-zone">
+          <input type="file" id="input-file-select" style="display: none;">
+          <div class="drop-zone-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="17 8 12 3 7 8"></polyline>
+              <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
           </div>
-          <div class="dropzone-progress" id="dropzone-progress" style="display: none;">
-            <div class="progress-bar-track">
-              <div class="progress-bar-fill" id="dropzone-progress-fill" style="width: 0%"></div>
-            </div>
-            <div class="progress-meta">
-              <span id="dropzone-filename">Uploading...</span>
-              <span id="dropzone-percent">0%</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Files Search & Filter Toolbar -->
-        <div class="files-toolbar">
-          <div class="search-input-wrapper">
-            <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            <input type="text" id="file-search-input" class="search-input" placeholder="Search files by name, path, or SHA-256 hash...">
-          </div>
-
-          <div class="filter-chips" id="file-filter-chips">
-            <button class="chip active" data-filter="all">All Files</button>
-            <button class="chip" data-filter="doc">Documents</button>
-            <button class="chip" data-filter="media">Media</button>
-            <button class="chip" data-filter="archive">Archives</button>
-            <button class="chip" data-filter="code">Code</button>
-          </div>
-
-          <div class="file-view-toggles">
-            <span class="files-count-badge" id="files-table-count">0 files</span>
-          </div>
+          <div class="drop-zone-text">Drop a file here to slice, encrypt, and replicate across the mesh</div>
+          <div class="drop-zone-subtext">Content is automatically segmented into SHA-256 chunks and distributed in parallel</div>
         </div>
 
         <!-- Files Data Table -->
         <div class="content-card">
-          <div class="table-container">
-            <table class="mesh-table" id="table-files-list">
+          <div class="content-card-header">
+            <span class="card-title">Stored Namespace Files</span>
+            <div class="table-header-actions">
+              <div class="table-search-input">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input type="text" id="input-file-search" placeholder="Filter files (press /)...">
+              </div>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table" id="files-table">
               <thead>
                 <tr>
-                  <th>Filename</th>
-                  <th>Logical Path</th>
+                  <th>Object Name</th>
+                  <th>Path</th>
                   <th>Size</th>
                   <th>Chunks</th>
-                  <th>Replicas</th>
-                  <th>Status</th>
-                  <th>Uploaded</th>
-                  <th class="text-right">Actions</th>
+                  <th>Root SHA-256 Hash</th>
+                  <th>Created</th>
+                  <th style="text-align: right;">Actions</th>
                 </tr>
               </thead>
-              <tbody id="files-list-tbody">
+              <tbody id="files-table-body">
                 <!-- Dynamically populated -->
               </tbody>
             </table>
@@ -325,68 +455,68 @@
       </section>
 
       <!-- ======================================================== -->
-      <!-- SCREEN C: TRANSFER CENTER                                -->
+      <!-- SCREEN C: STREAMS & DATA REPLICATION PIPELINES           -->
       <!-- ======================================================== -->
       <section class="screen-view" id="screen-transfers">
         <div class="view-header">
           <div>
-            <h1 class="view-title">Transfer Center</h1>
-            <p class="view-subtitle">Live peer-to-peer data streaming, chunk broadcast, and recovery operations</p>
+            <h1 class="view-title">Wire Streams & Replication</h1>
+            <p class="view-subtitle">Real-time IO throughput, chunk streaming pipelines, and historical distribution audit log</p>
           </div>
           <div class="view-actions">
-            <button class="btn btn-secondary btn-sm" id="btn-clear-transfers">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-              <span>Clear Inactive</span>
+            <button class="btn btn-secondary btn-sm" id="btn-clear-completed-transfers">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+              <span>Clear History</span>
             </button>
           </div>
         </div>
 
-        <!-- Transfer Stats KPI Cards -->
+        <!-- Streaming KPI Cards -->
         <div class="metrics-grid metrics-grid-3">
           <div class="metric-card">
             <div class="card-header">
-              <span class="card-title">Active Streaming</span>
-              <div class="icon-circle icon-cyan">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+              <span class="card-title">Active IO Streams</span>
+              <div class="icon-circle icon-healthy">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
               </div>
             </div>
             <div class="metric-value-row">
-              <div class="metric-big-number" id="transfer-stat-active">0</div>
-              <div class="metric-subtext">Active Streams</div>
+              <div class="metric-big-number tabular-nums" id="transfer-stat-active">0</div>
+              <div class="metric-subtext">Active Replication Sockets</div>
             </div>
           </div>
 
           <div class="metric-card">
             <div class="card-header">
               <span class="card-title">Completed Transfers</span>
-              <div class="icon-circle icon-indigo">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <div class="icon-circle">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
               </div>
             </div>
             <div class="metric-value-row">
-              <div class="metric-big-number" id="transfer-stat-completed">0</div>
-              <div class="metric-subtext">Files Replicated</div>
+              <div class="metric-big-number tabular-nums" id="transfer-stat-completed">0</div>
+              <div class="metric-subtext">Verified Objects Replicated</div>
             </div>
           </div>
 
           <div class="metric-card">
             <div class="card-header">
-              <span class="card-title">Protocol Wire</span>
-              <div class="icon-circle icon-amber">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line></svg>
+              <span class="card-title">Integrity Health</span>
+              <div class="icon-circle icon-healthy">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
               </div>
             </div>
             <div class="metric-value-row">
-              <div class="metric-big-number" id="transfer-stat-health">100%</div>
-              <div class="metric-subtext">Integrity Verified</div>
+              <div class="metric-big-number tabular-nums" id="transfer-stat-health">100%</div>
+              <div class="metric-subtext">0 Chunk Checksum Errors</div>
             </div>
           </div>
         </div>
 
-        <!-- Transfer Operations List -->
+        <!-- Transfer Queue Container -->
         <div class="content-card">
           <div class="content-card-header">
-            <h3 class="card-title">Transfer Queue & Historical Log</h3>
+            <span class="card-title">Replication Pipeline Queue</span>
           </div>
           <div class="transfers-container" id="transfers-container">
             <!-- Dynamically populated -->
@@ -395,149 +525,224 @@
       </section>
 
       <!-- ======================================================== -->
-      <!-- SCREEN D: DEVICES & MESH NETWORK                         -->
+      <!-- SCREEN D: TOPOLOGY & PARTICIPATING PEERS                 -->
       <!-- ======================================================== -->
       <section class="screen-view" id="screen-devices">
         <div class="view-header">
           <div>
-            <h1 class="view-title">Participating Devices</h1>
+            <h1 class="view-title">Network Mesh Topology</h1>
             <p class="view-subtitle">Manage trusted peer computers, storage quotas, and peer connectivity</p>
           </div>
           <div class="view-actions">
-            <button class="btn btn-primary" id="btn-open-add-device-modal">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-              <span>Connect to Peer Node</span>
+            <button class="btn btn-primary btn-sm" id="btn-open-add-device-modal">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              <span>Connect Peer Device</span>
             </button>
           </div>
         </div>
 
-        <!-- Shareable Node Address Banner -->
-        <div class="content-card" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(16, 185, 129, 0.08)); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 12px; padding: 18px 24px; margin-bottom: 24px;">
+        <!-- Local Network Banner -->
+        <div class="content-card" style="padding: var(--space-4) var(--space-5); margin-bottom: var(--space-5);">
           <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
             <div>
-              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-                <span class="status-beacon beacon-active"></span>
-                <span style="font-weight: 600; font-size: 0.95rem; color: #f1f5f9;">Your Shareable Connection Address</span>
-                <span class="badge" style="background: rgba(59, 130, 246, 0.2); color: #60a5fa; font-size: 0.75rem;">Auto-Detected</span>
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 2px;">
+                <span class="status-beacon beacon-active" style="color: var(--color-healthy);"></span>
+                <span style="font-weight: 600; font-size: 13px; color: var(--text-primary);">Shareable Peer Address</span>
+                <span class="badge badge-healthy" style="font-size: 10px;">Zero-Config LAN</span>
               </div>
-              <p style="margin: 0; font-size: 0.85rem; color: #94a3b8;">Other computers on your Wi-Fi or Ethernet network can enter this address to connect instantly.</p>
+              <p style="margin: 0; font-size: 12px; color: var(--text-muted);">Share this address with other computers on your Wi-Fi or Ethernet network to join the storage pool.</p>
             </div>
-            <div style="display: flex; align-items: center; gap: 10px;">
-              <div style="background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 8px 14px; font-family: 'JetBrains Mono', monospace; font-size: 1rem; color: #38bdf8; font-weight: 600; letter-spacing: 0.5px;" id="shareable-lan-address">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <div style="background: var(--bg-inset); border: 1px solid var(--border-default); border-radius: var(--radius-sm); padding: 5px 12px; font-family: var(--font-mono); font-size: 13px; color: var(--color-healthy); font-weight: 600;" id="shareable-lan-address" class="tabular-nums">
                 Detecting...
               </div>
-              <button class="btn btn-primary btn-sm" id="btn-copy-lan-address" title="Copy Address">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+              <button class="btn btn-secondary btn-sm" id="btn-copy-lan-address" title="Copy Address">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                 <span>Copy</span>
               </button>
             </div>
           </div>
         </div>
 
-        <!-- Device Grid -->
+        <!-- Devices Grid -->
         <div class="device-grid" id="devices-grid">
           <!-- Dynamically populated with cards for each node -->
+        </div>
+
+        <!-- Zero-Install Deployment to Other Computers Section -->
+        <div class="content-card" style="margin-top: var(--space-6);">
+          <div class="content-card-header">
+            <div>
+              <span class="card-title">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Zero-Install Deployment (No Go or Make Required)
+              </span>
+              <p class="view-subtitle" style="margin-top: 4px;">Run DIOFOS on any other computer across your Wi-Fi or local network without installing Go or Make</p>
+            </div>
+            <span class="badge badge-healthy">Standalone Executables</span>
+          </div>
+
+          <div class="binary-cards-grid" id="zero-install-binary-grid">
+            <!-- macOS Apple Silicon -->
+            <div class="binary-card">
+              <div class="binary-card-header">
+                <div class="binary-card-icon"></div>
+                <div>
+                  <div class="binary-card-title">macOS (Apple Silicon)</div>
+                  <div class="binary-card-arch">darwin / arm64 (M1/M2/M3/M4)</div>
+                </div>
+              </div>
+              <p class="binary-card-desc">Native standalone binary for modern MacBooks, Mac mini, and Mac Studio.</p>
+              <div class="binary-card-actions">
+                <a href="/api/v1/binaries/diofos-darwin-arm64" class="btn btn-secondary btn-sm" download>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                  <span>Download Binary</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- macOS Intel -->
+            <div class="binary-card">
+              <div class="binary-card-header">
+                <div class="binary-card-icon"></div>
+                <div>
+                  <div class="binary-card-title">macOS (Intel)</div>
+                  <div class="binary-card-arch">darwin / amd64 (x86_64)</div>
+                </div>
+              </div>
+              <p class="binary-card-desc">Native standalone binary for Intel-based Mac hardware.</p>
+              <div class="binary-card-actions">
+                <a href="/api/v1/binaries/diofos-darwin-amd64" class="btn btn-secondary btn-sm" download>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                  <span>Download Binary</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- Windows 64-bit -->
+            <div class="binary-card">
+              <div class="binary-card-header">
+                <div class="binary-card-icon">⊞</div>
+                <div>
+                  <div class="binary-card-title">Windows (64-bit)</div>
+                  <div class="binary-card-arch">windows / amd64 (.exe)</div>
+                </div>
+              </div>
+              <p class="binary-card-desc">Single standalone .exe for Windows 10 & 11 PCs. Just double click to launch.</p>
+              <div class="binary-card-actions">
+                <a href="/api/v1/binaries/diofos-windows-amd64.exe" class="btn btn-secondary btn-sm" download>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                  <span>Download EXE</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- Linux 64-bit -->
+            <div class="binary-card">
+              <div class="binary-card-header">
+                <div class="binary-card-icon">🐧</div>
+                <div>
+                  <div class="binary-card-title">Linux (x86_64)</div>
+                  <div class="binary-card-arch">linux / amd64 (glibc / musl static)</div>
+                </div>
+              </div>
+              <p class="binary-card-desc">Statically linked binary for Ubuntu, Debian, Fedora, Arch, and cloud nodes.</p>
+              <div class="binary-card-actions">
+                <a href="/api/v1/binaries/diofos-linux-amd64" class="btn btn-secondary btn-sm" download>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                  <span>Download Binary</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- Linux ARM64 -->
+            <div class="binary-card">
+              <div class="binary-card-header">
+                <div class="binary-card-icon">🥧</div>
+                <div>
+                  <div class="binary-card-title">Linux (ARM64)</div>
+                  <div class="binary-card-arch">linux / arm64 (Raspberry Pi & Servers)</div>
+                </div>
+              </div>
+              <p class="binary-card-desc">Static executable for Raspberry Pi 4/5, Orange Pi, and ARM64 servers.</p>
+              <div class="binary-card-actions">
+                <a href="/api/v1/binaries/diofos-linux-arm64" class="btn btn-secondary btn-sm" download>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                  <span>Download Binary</span>
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
       <!-- ======================================================== -->
-      <!-- SCREEN E: STORAGE SETTINGS & CONFIG                      -->
+      <!-- SCREEN E: ENGINE SETTINGS & QUOTA                        -->
       <!-- ======================================================== -->
       <section class="screen-view" id="screen-settings">
         <div class="view-header">
           <div>
-            <h1 class="view-title">Storage & Node Settings</h1>
-            <p class="view-subtitle">Configure disk allocation quotas, replication policy, and peer identity</p>
+            <h1 class="view-title">Storage Engine Configuration</h1>
+            <p class="view-subtitle">Configure disk allocation quotas, redundancy policy, and authority node identity</p>
           </div>
         </div>
 
-        <div class="settings-grid">
-          <!-- Local Node Identity Card -->
-          <div class="content-card">
-            <div class="content-card-header">
-              <h3 class="card-title">Node Identity & Cryptography</h3>
-            </div>
-            <div class="settings-body">
-              <div class="setting-item">
-                <label class="setting-label">Display Name</label>
-                <div class="setting-input-wrapper">
-                  <input type="text" id="setting-display-name" class="form-input" readonly>
-                </div>
-                <p class="setting-help">Human-readable identifier advertised to mesh peers</p>
-              </div>
-
-              <div class="setting-item">
-                <label class="setting-label">Node ID (Public Fingerprint)</label>
-                <div class="setting-input-wrapper copyable-wrapper">
-                  <input type="text" id="setting-node-id" class="form-input font-mono" readonly>
-                  <button class="btn btn-secondary btn-sm" id="btn-copy-node-id" title="Copy Node ID">Copy</button>
-                </div>
-                <p class="setting-help">ED25519-derived cryptographic peer identifier</p>
-              </div>
-
-              <div class="setting-item">
-                <label class="setting-label">Network ID</label>
-                <input type="text" id="setting-network-id" class="form-input" readonly>
-                <p class="setting-help">Mesh network cluster namespace</p>
-              </div>
-
-              <div class="setting-item">
-                <label class="setting-label">P2P Listen Address</label>
-                <input type="text" id="setting-listen-addr" class="form-input font-mono" readonly>
-                <p class="setting-help">TCP socket listening for incoming chunk transfer requests</p>
+        <div class="content-card">
+          <div class="content-card-header">
+            <span class="card-title">Storage Quotas & Allocation</span>
+          </div>
+          <div class="settings-group">
+            <div class="setting-item">
+              <label class="setting-label">Local Contributed Disk Storage</label>
+              <p class="setting-help">Maximum disk storage space this device contributes to the shared mesh volume</p>
+              <div class="range-slider-container">
+                <input type="range" min="1" max="500" value="10" class="range-slider" id="slider-storage-quota">
+                <span class="slider-val-badge" id="quota-display-value">10 GB</span>
+                <button class="btn btn-secondary btn-sm" id="btn-save-quota">Apply Quota</button>
               </div>
             </div>
           </div>
 
-          <!-- Storage Allocation Card -->
-          <div class="content-card">
-            <div class="content-card-header">
-              <h3 class="card-title">Storage Quota Allocation</h3>
+          <div class="settings-group">
+            <div class="setting-item">
+              <label class="setting-label">Default Replication Factor</label>
+              <input type="text" id="setting-rep-factor" class="form-input tabular-nums font-mono" value="2 (default)" readonly>
+              <p class="setting-help">Number of redundant chunk copies distributed across independent physical machines</p>
             </div>
-            <div class="settings-body">
-              <div class="setting-item">
-                <div class="slider-header">
-                  <label class="setting-label">Contributed Disk Space</label>
-                  <span class="slider-value-badge" id="setting-quota-display">10 GB</span>
-                </div>
-                <input type="range" id="setting-quota-slider" class="range-slider" min="1" max="100" step="1" value="10">
-                <div class="slider-scale">
-                  <span>1 GB</span>
-                  <span>25 GB</span>
-                  <span>50 GB</span>
-                  <span>100 GB</span>
-                </div>
-                <p class="setting-help">Adjust the maximum disk capacity this device contributes to the mesh pool</p>
-                
-                <div class="setting-action-row">
-                  <button class="btn btn-primary btn-sm" id="btn-save-quota">
-                    <span>Save Quota Change</span>
-                  </button>
-                  <span class="quota-save-status" id="quota-save-status"></span>
-                </div>
+
+            <div class="setting-item">
+              <label class="setting-label">DIOFOS REST API Endpoint</label>
+              <div style="display: flex; gap: 8px;">
+                <input type="text" id="setting-api-url" class="form-input font-mono" value="http://localhost:8070">
+                <button class="btn btn-secondary btn-sm" id="btn-apply-api-url">Switch Agent</button>
               </div>
+              <p class="setting-help">Network URL of the local or remote DIOFOS node daemon</p>
+            </div>
+          </div>
+        </div>
 
-              <div class="divider"></div>
-
-              <div class="setting-item">
-                <label class="setting-label">Chunk Size</label>
-                <input type="text" id="setting-chunk-size" class="form-input" value="1 MB" readonly>
-                <p class="setting-help">Fixed chunk size for content-addressable splitting</p>
-              </div>
-
-              <div class="setting-item">
-                <label class="setting-label">Replication Factor</label>
-                <input type="text" id="setting-rep-factor" class="form-input" value="2 (default)" readonly>
-                <p class="setting-help">Number of redundant copies stored across independent nodes</p>
-              </div>
-
-              <div class="setting-item">
-                <label class="setting-label">MeshStore API URL</label>
-                <div class="setting-input-wrapper">
-                  <input type="text" id="setting-api-url" class="form-input font-mono" value="http://localhost:8070">
-                  <button class="btn btn-secondary btn-sm" id="btn-apply-api-url">Switch Node</button>
-                </div>
-                <p class="setting-help">Switch which node agent this Web Dashboard communicates with</p>
+        <!-- Apple Color Palette Theme Settings Card -->
+        <div class="content-card" style="margin-top: var(--space-5);">
+          <div class="content-card-header">
+            <span class="card-title">Apple Visual Appearance & Color Palette</span>
+          </div>
+          <div class="settings-group">
+            <div class="setting-item">
+              <label class="setting-label">Active Color Theme</label>
+              <p class="setting-help">Select your preferred Apple design palette (Space Black, Natural Titanium, Midnight Navy, Silver Light)</p>
+              <div class="mobile-theme-list" style="margin-top: 8px; max-width: 520px;" id="settings-theme-list">
+                <button class="mobile-theme-btn active" data-theme="apple-space-black" type="button">
+                  <span class="theme-swatch swatch-space-black"></span> Space Black (Pro OLED)
+                </button>
+                <button class="mobile-theme-btn" data-theme="apple-titanium" type="button">
+                  <span class="theme-swatch swatch-titanium"></span> Natural Titanium (Slate)
+                </button>
+                <button class="mobile-theme-btn" data-theme="apple-midnight" type="button">
+                  <span class="theme-swatch swatch-midnight"></span> Midnight (Deep Navy)
+                </button>
+                <button class="mobile-theme-btn" data-theme="apple-silver-light" type="button">
+                  <span class="theme-swatch swatch-silver"></span> Silver Light (Apple.com)
+                </button>
               </div>
             </div>
           </div>
@@ -546,159 +751,156 @@
 
     </main>
 
+    <!-- Authoritative Technical Footer -->
+    <footer class="diofos-footer">
+      <div class="footer-content">
+        <div class="footer-left">
+          <span>DIOFOS Mesh Operations</span>
+          <span class="footer-dot"></span>
+          <span>AES-256 CTR Streaming Encryption</span>
+          <span class="footer-dot"></span>
+          <span>SHA-256 Content-Addressed Sharding</span>
+        </div>
+        <div class="footer-right">
+          <span>Network ID: <strong id="footer-network-id">default-mesh</strong></span>
+          <span class="footer-dot"></span>
+          <span>Port 7001</span>
+        </div>
+      </div>
+    </footer>
+
     <!-- ======================================================== -->
-    <!-- SCREEN F: FILE DETAILS & CHUNK TOPOLOGY MODAL            -->
+    <!-- MODAL: FILE DETAILS & CHUNK TOPOLOGY                     -->
     <!-- ======================================================== -->
     <div class="modal-backdrop" id="modal-file-details">
-      <div class="modal-card modal-lg">
+      <div class="modal-card modal-card-lg">
         <div class="modal-header">
-          <div class="modal-title-group">
-            <h2 class="modal-title" id="file-modal-title">File Details & Chunk Topology</h2>
-            <span class="modal-subtitle" id="file-modal-path">/filename.ext</span>
-          </div>
+          <h2 class="modal-title" id="file-modal-name">File Details</h2>
           <button class="modal-close-btn" id="btn-close-file-modal">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-          </button>
-        </div>
-
-        <div class="modal-body">
-          <!-- Metadata Summary Card -->
-          <div class="file-summary-grid">
-            <div class="summary-cell">
-              <span class="cell-label">File Size</span>
-              <span class="cell-value font-mono" id="file-modal-size">--</span>
-            </div>
-            <div class="summary-cell">
-              <span class="cell-label">Total Chunks</span>
-              <span class="cell-value font-mono" id="file-modal-chunks-count">--</span>
-            </div>
-            <div class="summary-cell">
-              <span class="cell-label">Replication Status</span>
-              <span class="cell-value badge badge-success" id="file-modal-rep-status">Healthy (2/2)</span>
-            </div>
-            <div class="summary-cell">
-              <span class="cell-label">Added Date</span>
-              <span class="cell-value" id="file-modal-date">--</span>
-            </div>
-          </div>
-
-          <div class="file-hash-banner">
-            <span class="hash-label">SHA-256 Root Hash:</span>
-            <span class="hash-code font-mono" id="file-modal-hash">--</span>
-            <button class="btn btn-ghost btn-xs" id="btn-copy-file-hash">Copy</button>
-          </div>
-
-          <!-- Chunk Topology Diagram -->
-          <div class="chunk-topology-section">
-            <div class="topology-header">
-              <h3 class="topology-title">Distributed Chunk Manifest</h3>
-              <span class="topology-subtitle">Content-addressed chunk placement across peer nodes</span>
-            </div>
-            <div class="chunk-grid" id="file-modal-chunks-grid">
-              <!-- Dynamically populated chunk cards -->
-            </div>
-          </div>
-        </div>
-
-        <div class="modal-footer">
-          <button class="btn btn-secondary" id="btn-modal-cancel">Close</button>
-          <button class="btn btn-primary" id="btn-modal-download">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-            <span>Download Reconstructed File</span>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- ======================================================== -->
-    <!-- UPLOAD FILE MODAL                                        -->
-    <!-- ======================================================== -->
-    <div class="modal-backdrop" id="modal-upload">
-      <div class="modal-card">
-        <div class="modal-header">
-          <h2 class="modal-title">Upload File to Storage Mesh</h2>
-          <button class="modal-close-btn" id="btn-close-upload-modal">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
           </button>
         </div>
         <div class="modal-body">
-          <div class="upload-dropzone modal-dropzone" id="modal-dropzone">
-            <input type="file" id="modal-file-input" class="hidden-file-input">
-            <div class="dropzone-content">
-              <div class="dropzone-icon">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+          <div style="margin-bottom: var(--space-4); display: flex; gap: 20px; flex-wrap: wrap;">
+            <div>
+              <span style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); display: block;">File Size</span>
+              <span id="file-modal-size" class="tabular-nums font-mono" style="font-weight: 600;">--</span>
+            </div>
+            <div>
+              <span style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); display: block;">Chunk Count</span>
+              <span id="file-modal-chunks-count" class="tabular-nums font-mono" style="font-weight: 600;">--</span>
+            </div>
+            <div style="flex: 1;">
+              <span style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); display: block;">Root Hash</span>
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <code id="file-modal-hash" class="font-mono tabular-nums" style="font-size: 11px; color: var(--text-primary); word-break: break-all;">--</code>
+                <button class="btn btn-secondary btn-sm" id="btn-copy-file-hash">Copy</button>
               </div>
-              <span class="dropzone-title" id="modal-file-chosen-text">Choose a file or drag here</span>
-              <span class="dropzone-subtitle" id="modal-file-size-text">Supports datasets, archives, documents, media</span>
             </div>
           </div>
 
-          <div class="setting-item" style="margin-top: 16px;">
-            <label class="setting-label">Logical Path (Optional)</label>
-            <input type="text" id="modal-upload-path" class="form-input font-mono" placeholder="/folder/filename.ext">
-            <p class="setting-help">Leave empty to store at root (e.g. /filename.ext)</p>
-          </div>
-
-          <div class="upload-status-box" id="modal-upload-status-box" style="display: none;">
-            <div class="progress-bar-track">
-              <div class="progress-bar-fill" id="modal-upload-progress-fill" style="width: 0%"></div>
-            </div>
-            <div class="progress-meta">
-              <span id="modal-upload-status-text">Chunking & Replicating...</span>
-              <span id="modal-upload-percent">0%</span>
-            </div>
+          <h3 style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); margin-bottom: 8px;">Replicated Chunk Topology</h3>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Chunk ID (SHA-256)</th>
+                  <th>Size</th>
+                  <th>Replica Locations</th>
+                </tr>
+              </thead>
+              <tbody id="file-modal-chunks-list">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
           </div>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-secondary" id="btn-cancel-upload-modal">Cancel</button>
-          <button class="btn btn-primary" id="btn-submit-upload" disabled>
-            <span>Start Upload & Distribute</span>
+          <button class="btn btn-secondary btn-sm" id="btn-modal-cancel">Close</button>
+          <button class="btn btn-primary btn-sm" id="btn-modal-download">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            <span>Download Object</span>
           </button>
         </div>
       </div>
     </div>
 
     <!-- ======================================================== -->
-    <!-- ADD DEVICE / CONNECT PEER MODAL                          -->
+    <!-- MODAL: CONNECT PEER DEVICE                               -->
     <!-- ======================================================== -->
     <div class="modal-backdrop" id="modal-add-device">
       <div class="modal-card">
         <div class="modal-header">
           <h2 class="modal-title">Connect Peer Device</h2>
           <button class="modal-close-btn" id="btn-close-device-modal">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
           </button>
         </div>
         <div class="modal-body">
-          <div style="background: rgba(30, 41, 59, 0.6); padding: 14px 18px; border-radius: 10px; border: 1px solid rgba(59, 130, 246, 0.2); margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between;">
+          <div style="background: var(--bg-inset); padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-default); margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between;">
             <div>
-              <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; color: #94a3b8; margin-bottom: 2px;">Your Address to Share</div>
-              <div class="font-mono" style="color: #38bdf8; font-size: 1.05rem; font-weight: 600;" id="modal-my-lan-address">Detecting...</div>
+              <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); margin-bottom: 2px;">Your Shareable Address</div>
+              <div class="font-mono tabular-nums" style="color: var(--color-healthy); font-size: 13px; font-weight: 600;" id="modal-my-lan-address">Detecting...</div>
             </div>
             <button class="btn btn-secondary btn-sm" id="btn-copy-modal-lan-address" type="button">Copy</button>
           </div>
 
           <div class="setting-item">
             <label class="setting-label">Peer TCP Listen Address</label>
-            <input type="text" id="input-peer-address" class="form-input font-mono" placeholder="e.g. 192.168.1.50:7001">
+            <input type="text" id="input-peer-address" class="form-input font-mono tabular-nums" placeholder="e.g. 192.168.1.38:7001">
             <p class="setting-help">Enter the IP and port shown on the other computer's screen</p>
           </div>
 
-          <div class="connection-feedback" id="peer-connect-feedback" style="display: none;"></div>
+          <div class="connection-feedback" id="peer-connect-feedback" style="display: none; margin-top: 10px; font-size: 12px;"></div>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-secondary" id="btn-cancel-device-modal">Cancel</button>
-          <button class="btn btn-primary" id="btn-submit-connect-peer">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
+          <button class="btn btn-secondary btn-sm" id="btn-cancel-device-modal">Cancel</button>
+          <button class="btn btn-primary btn-sm" id="btn-submit-connect-peer">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
             <span>Connect Peer</span>
           </button>
         </div>
       </div>
     </div>
 
-    <!-- Toast Notification Hub -->
-    <div class="toast-hub" id="toast-hub"></div>
+    <!-- ======================================================== -->
+    <!-- MODAL: UPLOAD PROGRESS                                   -->
+    <!-- ======================================================== -->
+    <div class="modal-backdrop" id="modal-upload">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h2 class="modal-title">Distribute Object</h2>
+          <button class="modal-close-btn" id="btn-close-upload-modal">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="upload-file-info" id="upload-file-info" style="margin-bottom: 16px;">
+            <div style="font-weight: 600;" id="upload-file-name">Selected File</div>
+            <div style="font-size: 12px; color: var(--text-muted);" id="upload-file-size" class="tabular-nums font-mono">-- KB</div>
+          </div>
+          <div class="modal-upload-progress" id="modal-upload-progress" style="display: none;">
+            <div class="capacity-bar-track">
+              <div class="capacity-bar-fill" id="modal-upload-progress-fill" style="width: 0%"></div>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-top: 6px;">
+              <span id="modal-upload-status-text">Chunking & Slicing...</span>
+              <span id="modal-upload-percent" class="tabular-nums font-mono">0%</span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary btn-sm" id="btn-cancel-upload-modal">Cancel</button>
+          <button class="btn btn-primary btn-sm" id="btn-submit-upload" disabled>
+            <span>Start Distribution</span>
+          </button>
+        </div>
+      </div>
+    </div>
 
+    <!-- Toast Notification Host -->
+    <div class="toast-container" id="toast-container"></div>
   </div>
 
   <script src="app.js"></script>

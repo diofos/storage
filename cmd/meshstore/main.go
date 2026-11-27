@@ -55,13 +55,13 @@ func main() {
 	}
 
 	fmt.Println("==================================================")
-	fmt.Printf("Starting MeshStore Node: %s\n", cfg.Node.DisplayName)
-	fmt.Printf("P2P Listen Address:      %s\n", cfg.Node.ListenAddress)
-	fmt.Printf("REST API Address:        http://%s\n", cfg.API.ListenAddress)
-	fmt.Printf("Data Directory:          %s\n", cfg.Node.DataDirectory)
-	fmt.Printf("Max Storage:             %d GB\n", cfg.Node.MaxStorageGB)
-	fmt.Printf("Replication Factor:      %d\n", cfg.Storage.ReplicationFactor)
-	fmt.Printf("Bootstrap Peers:         %v\n", cfg.Mesh.Peers)
+	fmt.Printf("Starting DIOFOS Node: %s\n", cfg.Node.DisplayName)
+	fmt.Printf("P2P Listen Address:   %s\n", cfg.Node.ListenAddress)
+	fmt.Printf("REST API Address:     http://%s\n", cfg.API.ListenAddress)
+	fmt.Printf("Data Directory:       %s\n", cfg.Node.DataDirectory)
+	fmt.Printf("Max Storage:          %d GB\n", cfg.Node.MaxStorageGB)
+	fmt.Printf("Replication Factor:   %d\n", cfg.Storage.ReplicationFactor)
+	fmt.Printf("Bootstrap Peers:      %v\n", cfg.Mesh.Peers)
 	fmt.Println("==================================================")
 
 	agent, err := node.NewNode(cfg)
@@ -85,8 +85,8 @@ func main() {
 	signal.Notify(sigCh, os.Interrupt, syscall.SIGTERM)
 	<-sigCh
 
-	fmt.Println("\nShutting down MeshStore...")
+	fmt.Println("\nShutting down DIOFOS...")
 	_ = apiServer.Stop()
 	agent.Stop()
-	fmt.Println("MeshStore shutdown complete.")
+	fmt.Println("DIOFOS shutdown complete.")
 }

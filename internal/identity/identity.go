@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 )
 
@@ -19,6 +20,32 @@ type NodeIdentity struct {
 
 const identityFileName = "identity.json"
 
+var adjectives = []string{
+	"Cosmic", "Solar", "Quantum", "Apex", "Atlas", "Nova", "Zenith", "Polaris",
+	"Stellar", "Titan", "Falcon", "Swift", "Nexus", "Orion", "Aero", "Pulse",
+	"Radiant", "Vanguard", "Echo", "Vector", "Hyper", "Silver", "Cyber", "Amber",
+	"Crystal", "Emerald", "Sapphire", "Iron", "Beacon", "Breeze", "Shadow", "Alpine",
+}
+
+var nouns = []string{
+	"Vault", "Node", "Drive", "Core", "Mesh", "Station", "Array", "Relay",
+	"Pod", "Haven", "Silo", "Cell", "Dock", "Tower", "Anchor", "Matrix",
+	"Sanctuary", "Depot", "Beacon", "Fortress",
+}
+
+// GenerateSensibleName generates a friendly, memorable node name like "Cosmic-Vault-481".
+func GenerateSensibleName() string {
+	b := make([]byte, 4)
+	if _, err := rand.Read(b); err != nil {
+		return fmt.Sprintf("MeshNode-%d", time.Now().UnixNano()%10000)
+	}
+	adjIdx := int(b[0]) % len(adjectives)
+	nounIdx := int(b[1]) % len(nouns)
+	num := (int(b[2])<<8 | int(b[3])) % 900 + 100 // 100-999
+
+	return fmt.Sprintf("%s-%s-%d", adjectives[adjIdx], nouns[nounIdx], num)
+}
+
 // LoadOrCreateIdentity loads existing identity from data directory or creates and persists a new one.
 func LoadOrCreateIdentity(dataDir string, displayName string) (*NodeIdentity, error) {
 	if err := os.MkdirAll(dataDir, 0755); err != nil {
@@ -30,8 +57,12 @@ func LoadOrCreateIdentity(dataDir string, displayName string) (*NodeIdentity, er
 	if data, err := os.ReadFile(identityPath); err == nil {
 		id := &NodeIdentity{}
 		if err := json.Unmarshal(data, id); err == nil && len(id.NodeID) > 0 {
-			if len(displayName) > 0 && id.DisplayName != displayName {
+			// If existing name is empty or a generic default, upgrade to sensible name or custom name
+			if len(displayName) > 0 && displayName != id.DisplayName && !strings.HasPrefix(displayName, "Node-") {
 				id.DisplayName = displayName
+				_ = saveIdentity(identityPath, id)
+			} else if strings.HasPrefix(id.DisplayName, "Node-") {
+				id.DisplayName = GenerateSensibleName()
 				_ = saveIdentity(identityPath, id)
 			}
 			return id, nil
@@ -44,13 +75,8 @@ func LoadOrCreateIdentity(dataDir string, displayName string) (*NodeIdentity, er
 		return nil, fmt.Errorf("failed to generate random identity: %w", err)
 	}
 
-	if len(displayName) == 0 {
-		hostname, _ := os.Hostname()
-		if len(hostname) > 0 {
-			displayName = hostname
-		} else {
-			displayName = "MeshNode-" + hex.EncodeToString(buf[:4])
-		}
+	if len(displayName) == 0 || strings.HasPrefix(displayName, "Node-") {
+		displayName = GenerateSensibleName()
 	}
 
 	id := &NodeIdentity{

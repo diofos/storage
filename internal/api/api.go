@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -60,6 +62,8 @@ func NewServer(n *node.Node) *Server {
 	mux.HandleFunc("/api/v1/files/", s.handleFileItem)
 	mux.HandleFunc("/api/v1/transfers", s.handleTransfers)
 	mux.HandleFunc("/api/v1/storage", s.handleStorage)
+	mux.HandleFunc("/api/v1/binaries", s.handleBinaries)
+	mux.HandleFunc("/api/v1/binaries/", s.handleDownloadBinary)
 
 	s.httpSrv = &http.Server{
 		Addr:    n.Config.API.ListenAddress,
@@ -344,4 +348,79 @@ func (s *Server) calculateStorageHealth(online int, total int) string {
 		return "degraded"
 	}
 	return "critical"
+}
+
+func (s *Server) handleBinaries(w http.ResponseWriter, r *http.Request) {
+	type BinaryInfo struct {
+		Name        string `json:"name"`
+		Platform    string `json:"platform"`
+		Arch        string `json:"arch"`
+		Description string `json:"description"`
+		DownloadURL string `json:"download_url"`
+		SizeBytes   int64  `json:"size_bytes"`
+		Available   bool   `json:"available"`
+	}
+
+	targets := []struct {
+		Filename string
+		Platform string
+		Arch     string
+		Desc     string
+	}{
+		{"diofos-darwin-arm64", "macOS", "ARM64 (Apple Silicon M1/M2/M3/M4)", "Standalone binary for Apple Silicon Macs"},
+		{"diofos-darwin-amd64", "macOS", "x86_64 (Intel)", "Standalone binary for Intel-based Macs"},
+		{"diofos-windows-amd64.exe", "Windows", "x86_64 (64-bit)", "Standalone executable for 64-bit Windows"},
+		{"diofos-linux-amd64", "Linux", "x86_64", "Standalone binary for 64-bit Linux distributions"},
+		{"diofos-linux-arm64", "Linux", "ARM64", "Standalone binary for ARM64 Linux / Raspberry Pi"},
+	}
+
+	binaries := make([]BinaryInfo, 0, len(targets))
+	for _, t := range targets {
+		distPath := filepath.Join("bin", "dist", t.Filename)
+		info, err := os.Stat(distPath)
+		var size int64
+		avail := false
+		if err == nil && !info.IsDir() {
+			size = info.Size()
+			avail = true
+		}
+		binaries = append(binaries, BinaryInfo{
+			Name:        t.Filename,
+			Platform:    t.Platform,
+			Arch:        t.Arch,
+			Description: t.Desc,
+			DownloadURL: "/api/v1/binaries/" + t.Filename,
+			SizeBytes:   size,
+			Available:   avail,
+		})
+	}
+
+	s.writeJSON(w, http.StatusOK, map[string]any{
+		"binaries": binaries,
+	})
+}
+
+func (s *Server) handleDownloadBinary(w http.ResponseWriter, r *http.Request) {
+	filename := strings.TrimPrefix(r.URL.Path, "/api/v1/binaries/")
+	filename = filepath.Base(filename)
+	if filename == "." || filename == "/" || filename == "" {
+		s.writeError(w, http.StatusBadRequest, "binary filename required")
+		return
+	}
+
+	distPath := filepath.Join("bin", "dist", filename)
+	info, err := os.Stat(distPath)
+	if err != nil || info.IsDir() {
+		fallback := filepath.Join("bin", filename)
+		info, err = os.Stat(fallback)
+		if err != nil || info.IsDir() {
+			s.writeError(w, http.StatusNotFound, "binary not found")
+			return
+		}
+		distPath = fallback
+	}
+
+	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", filename))
+	w.Header().Set("Content-Type", "application/octet-stream")
+	http.ServeFile(w, r, distPath)
 }

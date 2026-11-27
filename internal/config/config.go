@@ -41,10 +41,10 @@ type APIConfig struct {
 func DefaultConfig(listenPort string) *Config {
 	return &Config{
 		Node: NodeConfig{
-			ListenAddress: "127.0.0.1:" + listenPort,
+			ListenAddress: "0.0.0.0:" + listenPort,
 			DataDirectory: "./meshstore_data_" + listenPort,
 			MaxStorageGB:  10,
-			DisplayName:   "Node-" + listenPort,
+			DisplayName:   "",
 		},
 		Mesh: MeshConfig{
 			NetworkID: "default-mesh",
